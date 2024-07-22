@@ -3,6 +3,9 @@ import re
 import psycopg2
 from psycopg2 import sql
 
+# Nome da tabela para facilitar e renomear em um só lugar
+tabela = 'olympic_hosts'
+
 # Configurações de conexão
 host = 'localhost'
 dbname = 'DW_IMP_EXP'
@@ -26,39 +29,25 @@ cursor = conn.cursor()
 
 # Criar a tabela com chave primária composta
 create_table_query = sql.SQL('''
-    CREATE TABLE IF NOT EXISTS {}.olympic_athletes (
-        athlete_url TEXT,
-        athlete_full_name TEXT,
-        games_participations INT,
-        first_game TEXT,
-        athlete_year_birth INT,
-        athlete_medals TEXT,
-        bio TEXT
+    CREATE TABLE IF NOT EXISTS {}.{} (
+        game_slug TEXT,
+        game_end_date TIMESTAMPTZ,
+        game_start_date TIMESTAMPTZ,
+        game_location TEXT,
+        game_name TEXT,
+        game_season TEXT,
+        game_year INT
     )
-    ''').format(sql.Identifier(schema_name))
+    ''').format(sql.Identifier(schema_name), sql.Identifier(tabela))
 
 cursor.execute(create_table_query)
 conn.commit()
 
 # Caminho do arquivo
-csv_file_path = 'I:/Meu Drive/ESTUDOS DATA SCIENCE/DESAFIO JOGOS OLÍMPICOS/05-Olimpiadas/olympic_athletes.csv'
+csv_file_path = 'I:/Meu Drive/ESTUDOS DATA SCIENCE/DESAFIO JOGOS OLÍMPICOS/05-Olimpiadas/olympic_hosts.csv'
 
 # Ler o arquivo CSV com delimitador ','
 df = pd.read_csv(csv_file_path, delimiter=',')
-
-# Função para limpar o texto das colunas
-def clean_text(text):
-    if pd.notna(text):
-        return re.sub(r'\s+', ' ', text).strip()  # Substituir múltiplos espaços e quebras de linha por um único espaço
-    return text
-
-# Aplicar a função nas colunas de interesse
-df['bio'] = df['bio'].apply(clean_text)
-df['athlete_medals'] = df['athlete_medals'].apply(clean_text)
-
-# Converter colunas para inteiros, com tratamento de valores não numéricos
-df['games_participations'] = pd.to_numeric(df['games_participations'], errors='coerce').fillna(0).astype(int)
-df['athlete_year_birth'] = pd.to_numeric(df['athlete_year_birth'], errors='coerce').fillna(0).astype(int)
 
 # Substituir NaN por None em todas as colunas
 df = df.where(pd.notnull(df), None)
@@ -73,9 +62,9 @@ data_records = df.values.tolist()
 try:
     # Cria a query SQL parametrizada para inserção em lote
     insert_query = sql.SQL("""
-    INSERT INTO {}.olympic_athletes (athlete_url, athlete_full_name, games_participations, first_game, athlete_year_birth, athlete_medals, bio)
+    INSERT INTO {}.{} (game_slug, game_end_date, game_start_date, game_location, game_name, game_season, game_year)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """).format(sql.Identifier(schema_name))
+    """).format(sql.Identifier(schema_name), sql.Identifier(tabela))
 
     cursor.executemany(insert_query, data_records)
     conn.commit()
