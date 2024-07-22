@@ -3,7 +3,7 @@
 import pandas as pd
 
 # Exemplo de uso
-csv_file_path = 'I:/Meu Drive/ESTUDOS DATA SCIENCE/DESAFIO JOGOS OLÍMPICOS/05-Olimpiadas/olympic_hosts.csv'
+csv_file_path = 'I:/Meu Drive/ESTUDOS DATA SCIENCE/DESAFIO JOGOS OLÍMPICOS/05-Olimpiadas/olympic_medals.csv'
 
 # Ler o arquivo CSV com delimitador ','
 df = pd.read_csv(csv_file_path, delimiter=',')
