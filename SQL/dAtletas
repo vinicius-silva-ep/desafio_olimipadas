@@ -1,0 +1,29 @@
+with quantidade as (
+select
+	oa.athlete_full_name,
+	oa.athlete_year_birth,
+	oa.athlete_medals,
+	om.country_name,
+	oa.athlete_full_name || '-' || om.country_name as fk_athlete
+from
+	olympic_athletes oa
+left join 
+(
+	select
+		distinct athlete_full_name,
+		country_name
+	from
+		olympic_medals) om on 
+	oa.athlete_full_name = om.athlete_full_name)
+--select
+--	fk_athlete,
+--	count(*)
+--from
+--	quantidade
+--group by
+--	fk_athlete
+--having
+--	count(*) > 1
+
+	select * from quantidade
+	where athlete_full_name = 'Abdullah ALRASHIDI'

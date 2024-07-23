@@ -1,0 +1,5 @@
+select
+	*,
+	om.athlete_full_name || '-' || om.country_name as fk_athlete
+from
+	olympic_medals om
