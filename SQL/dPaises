@@ -1,0 +1,6 @@
+select
+	distinct(country_name),
+	country_3_letter_code
+from
+	olympic_results or2
+	
