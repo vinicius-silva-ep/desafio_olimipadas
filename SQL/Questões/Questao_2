@@ -1,6 +1,6 @@
 select
 	country_name,
-	count(distinct athlete_full_name)
+	count(distinct upper(athlete_full_name))
 from
 	olympic_medals om
 where
