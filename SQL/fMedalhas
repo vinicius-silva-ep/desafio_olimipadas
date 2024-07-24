@@ -1,5 +1,5 @@
 select
-	*,
-	om.athlete_full_name || '-' || om.country_name as fk_athlete
+	*, 
+	upper(athlete_full_name) as athlete_full_name_upper
 from
 	olympic_medals om

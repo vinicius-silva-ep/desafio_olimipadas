@@ -1,22 +1,19 @@
 with atletas as (
-select
-	athlete_full_name
-from
-	olympic_athletes oa
-where
-	athlete_full_name is not null
+select  
+	upper(athlete_full_name) as athlete_full_name
+from 
+	olympic_athletes
 union
 select
-	athlete_full_name
+	upper(athlete_full_name) as athlete_full_name
 from
-	olympic_medals om
+	olympic_medals)
+select
+	distinct trim(athlete_full_name) as athlete_full_name
+from
+	atletas
 where
 	athlete_full_name is not null
-)
-select
-	upper(athlete_full_name)
-from
-	atletas;
 
 
 
