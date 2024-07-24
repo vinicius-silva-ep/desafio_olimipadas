@@ -1,8 +1,23 @@
+with atletas as (
 select
-	distinct
-    athlete_full_name
+	athlete_full_name
 from
 	olympic_athletes oa
+where
+	athlete_full_name is not null
+union
+select
+	athlete_full_name
+from
+	olympic_medals om
+where
+	athlete_full_name is not null
+)
+select
+	upper(athlete_full_name)
+from
+	atletas;
+
 
 
 -- with atletas as (
