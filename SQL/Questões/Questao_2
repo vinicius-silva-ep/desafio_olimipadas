@@ -1,0 +1,9 @@
+select
+	country_name,
+	count(distinct athlete_full_name)
+from
+	olympic_medals om
+where
+	athlete_full_name is not null
+group by
+	country_name
