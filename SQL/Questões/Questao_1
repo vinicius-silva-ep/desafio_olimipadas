@@ -1,0 +1,26 @@
+with qtd_medalhas as (
+select
+	country_name,
+	case
+		when medal_type = 'GOLD' then 1
+	end as GOLD,
+	case
+		when medal_type = 'SILVER' then 1
+	end as SILVER,
+	case
+		when medal_type = 'BRONZE' then 1
+	end as BRONZE
+from
+	olympic_medals om
+where
+	athlete_full_name is not null	
+	)
+select
+	country_name,
+	sum(GOLD) as gold,
+	sum(SILVER) as silver,
+	sum(BRONZE) as bronze
+from
+	qtd_medalhas
+group by
+	country_name
