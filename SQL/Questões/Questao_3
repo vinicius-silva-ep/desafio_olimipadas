@@ -1,0 +1,9 @@
+select
+	upper(athlete_full_name) as athlete_full_name,
+	count(*)
+from
+	olympic_medals om
+where
+	athlete_full_name is not null
+group by
+	athlete_full_name
