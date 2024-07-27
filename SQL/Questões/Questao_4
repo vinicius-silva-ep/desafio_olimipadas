@@ -1,0 +1,25 @@
+with full_name as (
+select
+	distinct slug_game,
+	 athlete_full_name as athlete
+from
+	olympic_results or2
+where
+	athlete_full_name is not null ),
+	
+	
+--select
+--	distinct slug_game, 
+--	count(*) as total
+--from
+--	olympic_results or2
+--where
+--	athlete_name_1 is not null
+--	or athlete_name_2 is not null
+--	or athlete_full_name is not null
+--group by
+--	slug_game
+--order by
+--	total desc
+	
+	select * from atletas
