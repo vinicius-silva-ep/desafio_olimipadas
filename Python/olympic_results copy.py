@@ -79,7 +79,7 @@ for i in range(max_athletes):
 # Remover a coluna original 'athletes' se desejar
 df = df.drop(columns=['athletes'])
 
-# Substituir NaN por None em todas as colunas (pandas já faz isso por padrão)
+# Substituir NaN por None em todas as colunas
 df = df.where(pd.notnull(df), None)
 
 # Verificar o DataFrame final antes da inserção
