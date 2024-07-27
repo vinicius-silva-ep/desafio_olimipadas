@@ -1,5 +1,5 @@
 import pandas as pd
-import re
+import ast
 import psycopg2
 from psycopg2 import sql
 
@@ -35,7 +35,6 @@ create_table_query = sql.SQL('''
         slug_game TEXT,
         participant_type TEXT,
         medal_type TEXT,
-        athletes TEXT,
         rank_equal TEXT,
         rank_position TEXT,
         country_name TEXT,
@@ -44,10 +43,11 @@ create_table_query = sql.SQL('''
         athlete_url TEXT,
         athlete_full_name TEXT,
         value_unit TEXT,
-        value_type TEXT
+        value_type TEXT,
+        athlete_name_1 TEXT,
+        athlete_name_2 TEXT
     )
     ''').format(sql.Identifier(schema_name), sql.Identifier(tabela))
-
 
 cursor.execute(create_table_query)
 conn.commit()
@@ -58,21 +58,42 @@ csv_file_path = 'I:/Meu Drive/ESTUDOS DATA SCIENCE/DESAFIO JOGOS OLÍMPICOS/05-O
 # Ler o arquivo CSV com delimitador ','
 df = pd.read_csv(csv_file_path, delimiter=',')
 
+# Função para extrair nomes dos atletas
+def extract_athlete_names(athletes_str):
+    if pd.isna(athletes_str):
+        return []
+    try:
+        athletes_list = ast.literal_eval(athletes_str)
+        return [athlete[0] for athlete in athletes_list]
+    except (ValueError, SyntaxError):
+        return []
+
+# Aplicar a função e expandir as listas em colunas
+athlete_names = df['athletes'].apply(extract_athlete_names)
+max_athletes = athlete_names.apply(len).max()  # Número máximo de atletas em uma linha
+
+# Adicionar colunas dinamicamente para os nomes dos atletas
+for i in range(max_athletes):
+    df[f'athlete_name_{i+1}'] = athlete_names.apply(lambda names: names[i] if i < len(names) else None)
+
+# Remover a coluna original 'athletes' se desejar
+df = df.drop(columns=['athletes'])
+
 # Substituir NaN por None em todas as colunas
 df = df.where(pd.notnull(df), None)
 
-# Exibir os primeiros registros para confirmar o carregamento
+# Verificar o DataFrame final antes da inserção
 print(df.head())
 
 # Preparar os dados para inserção
-data_records = df.values.tolist()
+data_records = df.values.tolist()  # Não substitua NaN por string vazia
 
 # Inserir os dados no banco e faz a verificação se houve algo que deu errado
 try:
     # Cria a query SQL parametrizada para inserção em lote
     insert_query = sql.SQL("""
-    INSERT INTO {}.{} (discipline_title, event_title, slug_game, participant_type, medal_type, athletes, rank_equal, rank_position, country_name, country_code, country_3_letter_code, athlete_url, athlete_full_name, value_unit, value_type)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO {}.{} (discipline_title, event_title, slug_game, participant_type, medal_type, rank_equal, rank_position, country_name, country_code, country_3_letter_code, athlete_url, athlete_full_name, value_unit, value_type, athlete_name_1, athlete_name_2)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """).format(sql.Identifier(schema_name), sql.Identifier(tabela))
 
     cursor.executemany(insert_query, data_records)
