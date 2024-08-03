@@ -1,0 +1,10 @@
+select
+	oh.game_season,
+	count(game_slug) as qtd_jogos
+from
+	olympic_hosts oh
+left join 
+	olympic_results or2 on
+	oh.game_slug = or2.slug_game
+group by
+	oh.game_season
