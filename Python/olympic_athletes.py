@@ -52,9 +52,19 @@ def clean_text(text):
         return re.sub(r'\s+', ' ', text).strip()  # Substituir múltiplos espaços e quebras de linha por um único espaço
     return text
 
+# Função para limpar a coluna athlete_full_name
+def clean_athlete_name(name):
+    if pd.notna(name):
+        name = name.lstrip()  # Left trim
+        if name.startswith('. '):
+            name = name[2:]  # Remover '. ' se estiver no início
+        return name
+    return name
+
 # Aplicar a função nas colunas de interesse
 df['bio'] = df['bio'].apply(clean_text)
 df['athlete_medals'] = df['athlete_medals'].apply(clean_text)
+df['athlete_full_name'] = df['athlete_full_name'].apply(clean_athlete_name)
 
 # Converter colunas para inteiros, com tratamento de valores não numéricos
 df['games_participations'] = pd.to_numeric(df['games_participations'], errors='coerce').fillna(0).astype(int)

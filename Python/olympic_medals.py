@@ -57,6 +57,18 @@ df = pd.read_csv(csv_file_path, delimiter=',')
 # Substituir NaN por None em todas as colunas
 df = df.where(pd.notnull(df), None)
 
+# Função para limpar a coluna athlete_full_name
+def clean_athlete_name(name):
+    if pd.notna(name):
+        name = name.lstrip()  # Left trim
+        if name.startswith('- '):
+            name = name[2:]  # Remover '- ' se estiver no início
+        return name
+    return name
+
+# Aplicar a função nas colunas de interesse
+df['athlete_full_name'] = df['athlete_full_name'].apply(clean_athlete_name)
+
 # Exibir os primeiros registros para confirmar o carregamento
 print(df.head())
 

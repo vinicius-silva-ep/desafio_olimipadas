@@ -67,20 +67,37 @@ def extract_athlete_names(athletes_str):
         return [athlete[0] for athlete in athletes_list]
     except (ValueError, SyntaxError):
         return []
+    
 
 # Aplicar a função e expandir as listas em colunas
 athlete_names = df['athletes'].apply(extract_athlete_names)
 max_athletes = athlete_names.apply(len).max()  # Número máximo de atletas em uma linha
 
+
 # Adicionar colunas dinamicamente para os nomes dos atletas
 for i in range(max_athletes):
     df[f'athlete_name_{i+1}'] = athlete_names.apply(lambda names: names[i] if i < len(names) else None)
 
-# Remover a coluna original 'athletes' se desejar
+# Remover a coluna original 'athletes'
 df = df.drop(columns=['athletes'])
+
+# Função para limpar as coluna 'athlete_full_name'
+def clean_athlete_name(name):
+    if pd.notna(name):
+        name = name.lstrip()  # Left trim
+        if name.startswith('- ') or name.startswith('. '):
+            name = name[2:]  # Remover '- ' se estiver no início
+        return name
+    return name    
+
+# Aplicar a função de limpeza nas colunas
+df['athlete_full_name'] = df['athlete_full_name'].apply(clean_athlete_name)
+df['athlete_name_1'] = df['athlete_name_1'].apply(clean_athlete_name)
+df['athlete_name_2'] = df['athlete_name_2'].apply(clean_athlete_name)
 
 # Substituir NaN por None em todas as colunas
 df = df.where(pd.notnull(df), None)
+
 
 # Verificar o DataFrame final antes da inserção
 print(df.head())
