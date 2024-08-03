@@ -1,9 +1,52 @@
+with athelete_a as (
 select
-	country_name,
-	count(distinct upper(athlete_full_name))
+	distinct upper(athlete_full_name) as athlete,
+	country_name
 from
-	olympic_medals om
+	olympic_results or2
 where
 	athlete_full_name is not null
+	and length(athlete_full_name) > 3	
+	),
+athelete_b as (
+select
+	distinct upper(athlete_name_1) as athlete,
+	country_name
+from
+	olympic_results or2
+where
+	athlete_name_1 is not null
+	and length(athlete_name_1) > 3	
+	),
+athelete_c as (
+select
+	distinct upper(athlete_name_2) as athlete,
+	country_name
+from
+	olympic_results or2
+where
+	athlete_name_2 is not null
+	and length(athlete_name_2) > 3	
+	),
+uniao as (
+select
+	*
+from
+	athelete_a
+union
+select
+	*
+from
+	athelete_b
+union
+select
+	*
+from
+	athelete_c)
+select
+	country_name,
+	count(distinct athlete)
+from
+	uniao
 group by
 	country_name

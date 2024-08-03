@@ -5,5 +5,7 @@ from
 	olympic_medals om
 where
 	athlete_full_name is not null
+	and
+	length(athlete_full_name) > 3
 group by
 	athlete_full_name

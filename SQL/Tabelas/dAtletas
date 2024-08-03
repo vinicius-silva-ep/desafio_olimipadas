@@ -3,51 +3,45 @@ select
 	upper(athlete_full_name) as athlete_full_name
 from 
 	olympic_athletes
-union
+union all
 select
 	upper(athlete_full_name) as athlete_full_name
 from
-	olympic_medals)
+	olympic_medals
+union all
 select
-	distinct trim(athlete_full_name) as athlete_full_name
+	upper(athlete_full_name) as athlete_full_name
 from
-	atletas
+	olympic_results
+union all
+select
+	upper(athlete_name_1) as athlete_full_name
+from
+	olympic_results
+union all
+select
+	upper(athlete_name_2) as athlete_full_name
+from
+	olympic_results ),
+atletas_final as 
+(
+select 
+	case
+		when athlete_full_name like '-%'
+		or athlete_full_name like '.%' then replace(replace(athlete_full_name,
+		'- ',
+		''),
+		'. ',
+		'')
+		else athlete_full_name
+	end
+	as athlete_full_name
+from
+	atletas)
+	select
+		distinct trim(athlete_full_name)
+from
+	atletas_final
 where
 	athlete_full_name is not null
-
-
-
--- with atletas as (
--- select
--- 	oa.athlete_full_name,
--- 	oa.athlete_year_birth,
--- 	oa.athlete_medals,
--- 	om.country_name,
--- 	case
--- 		when om.country_name is null then oa.athlete_full_name || '-' || oa.athlete_year_birth
--- 		else oa.athlete_full_name || '-' || oa.athlete_year_birth || '-' || om.country_name
--- 	end as fk_athlete
--- from
--- 	olympic_athletes oa
--- left join 
--- (
--- 	select
--- 		distinct athlete_full_name,
--- 		country_name
--- 	from
--- 		olympic_medals) om on 
--- 	oa.athlete_full_name = om.athlete_full_name)
--- --select
--- --	distinct fk_athlete,
--- --	count(*)
--- --from
--- --	atletas
--- --where
--- --	athlete_medals is not null
--- --group by
--- --	fk_athlete
--- --having
--- --	count(*)>1
--- select distinct * from atletas
--- where athlete_full_name = 'Vladimir MOROZOV'
-	
+	and length (athlete_full_name) > 3

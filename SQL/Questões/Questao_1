@@ -13,7 +13,7 @@ select
 from
 	olympic_medals om
 where
-	athlete_full_name is not null	
+	athlete_full_name is not null and length(athlete_full_name) > 3
 	)
 select
 	country_name,
