@@ -1,25 +1,55 @@
-with full_name as (
+with athelete_a as (
 select
-	distinct slug_game,
-	 athlete_full_name as athlete
+	distinct upper(athlete_full_name) as athlete,
+	slug_game
 from
 	olympic_results or2
 where
-	athlete_full_name is not null ),
-	
-	
---select
---	distinct slug_game, 
---	count(*) as total
---from
---	olympic_results or2
---where
---	athlete_name_1 is not null
---	or athlete_name_2 is not null
---	or athlete_full_name is not null
---group by
---	slug_game
---order by
---	total desc
-	
-	select * from atletas
+	athlete_full_name is not null
+	and length(athlete_full_name) > 3	
+	),
+athelete_b as (
+select
+	distinct upper(athlete_name_1) as athlete,
+	slug_game
+from
+	olympic_results or2
+where
+	athlete_name_1 is not null
+	and length(athlete_name_1) > 3	
+	),
+athelete_c as (
+select
+	distinct upper(athlete_name_2) as athlete,
+	slug_game
+from
+	olympic_results or2
+where
+	athlete_name_2 is not null
+	and length(athlete_name_2) > 3	
+	),
+uniao as (
+select
+	*
+from
+	athelete_a
+union
+select
+	*
+from
+	athelete_b
+union
+select
+	*
+from
+	athelete_c)
+select
+	slug_game,
+	count(distinct athlete)
+from
+	uniao
+group by
+	slug_game
+order by
+	right(slug_game,
+	4) desc
