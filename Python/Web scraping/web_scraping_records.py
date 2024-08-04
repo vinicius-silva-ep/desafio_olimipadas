@@ -73,3 +73,7 @@ driver.quit()
 
 # Exibir o DataFrame combinado
 print(df_combined)
+
+# Gerar o arquivo CSV
+output_path = 'I:\\Meu Drive\\ESTUDOS DATA SCIENCE\\DESAFIO JOGOS OLÍMPICOS\\05-Olimpiadas\\olympic_records.csv'
+df_combined.to_csv(output_path, index=False)
