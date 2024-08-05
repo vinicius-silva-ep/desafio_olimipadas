@@ -1,6 +1,7 @@
 import pandas as pd
 import psycopg2
 from psycopg2 import sql
+import numpy as np
 
 # Nome da tabela para facilitar e renomear em um só lugar
 tabela = 'olympic_records'
@@ -48,7 +49,7 @@ conn.commit()
 # Caminho do arquivo
 csv_file_path = 'I:/Meu Drive/ESTUDOS DATA SCIENCE/DESAFIO JOGOS OLÍMPICOS/05-Olimpiadas/olympic_records.csv'
 
-# Ler o arquivo CSV com delimitador ','
+# Ler o arquivo CSV com delimitador ',' e tratar valores vazios
 df = pd.read_csv(csv_file_path, delimiter=',')
 
 # Converter a coluna 'DOB' para o formato de data
@@ -57,10 +58,14 @@ df['DOB'] = pd.to_datetime(df['DOB'], format='%d %b %Y', errors='coerce')
 # Converter a coluna 'Date' para o formato de data
 df['Date'] = pd.to_datetime(df['Date'], format='%d %b %Y', errors='coerce')
 
-# Substituir NaN por None em todas as colunas
-df = df.where(pd.notnull(df), None)
+# Remover valroes NaN nas colunas
+df = df.applymap(lambda x: None if pd.isna(x) else x)
+df = df.replace({np.nan: None})
 
-# Exibir os primeiros registros para confirmar o carregamento
+# Substituir NaT por None
+df = df.replace({pd.NaT: None})
+
+# Exibir os registros
 print(df.head())
 
 # Preparar os dados para inserção
