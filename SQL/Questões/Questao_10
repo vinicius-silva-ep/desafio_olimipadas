@@ -1,0 +1,21 @@
+with athlete_idade as (
+select
+	distinct om.athlete_full_name,
+	right(om.slug_game,
+	4) as data_do_jogo,
+	oa.athlete_year_birth as nascimento,
+	right(om.slug_game,
+	4)::integer - oa.athlete_year_birth as idade
+from
+	olympic_medals om
+left join olympic_athletes oa on
+	upper(om.athlete_full_name) = upper(oa.athlete_full_name)
+where
+	oa.athlete_full_name is not null
+	and oa.athlete_year_birth < right(om.slug_game,
+	4)::integer
+	and oa.athlete_year_birth > 0)
+select
+	avg(idade)
+from
+	athlete_idade
