@@ -45,7 +45,7 @@ select
 from
 	atletas)
 	select
-		distinct trim(athlete_full_name),
+		distinct trim(athlete_full_name) as athlete_full_name,
 		country_name,
 		trim(athlete_full_name) || '-' || country_name as fk_Athlete
 from
