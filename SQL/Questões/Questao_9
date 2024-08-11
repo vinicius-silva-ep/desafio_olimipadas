@@ -1,0 +1,7 @@
+select
+	game_location,
+	count(*) as contagem
+from
+	olympic_hosts oh
+group by
+	game_location
