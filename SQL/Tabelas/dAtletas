@@ -1,26 +1,31 @@
 with atletas as (
 select  
-	upper(athlete_full_name) as athlete_full_name
+	upper(athlete_full_name) as athlete_full_name,
+	null as country_name
 from 
 	olympic_athletes
 union all
 select
-	upper(athlete_full_name) as athlete_full_name
+	upper(athlete_full_name) as athlete_full_name,
+	country_name
 from
 	olympic_medals
 union all
 select
-	upper(athlete_full_name) as athlete_full_name
+	upper(athlete_full_name) as athlete_full_name,
+	country_name
 from
 	olympic_results
 union all
 select
-	upper(athlete_name_1) as athlete_full_name
+	upper(athlete_name_1) as athlete_full_name,
+	country_name
 from
 	olympic_results
 union all
 select
-	upper(athlete_name_2) as athlete_full_name
+	upper(athlete_name_2) as athlete_full_name,
+	country_name
 from
 	olympic_results ),
 atletas_final as 
@@ -35,13 +40,17 @@ select
 		'')
 		else athlete_full_name
 	end
-	as athlete_full_name
+	as athlete_full_name,
+	country_name
 from
 	atletas)
 	select
-		distinct trim(athlete_full_name)
+		distinct trim(athlete_full_name),
+		country_name,
+		trim(athlete_full_name) || '-' || country_name as fk_Athlete
 from
 	atletas_final
 where
 	athlete_full_name is not null
 	and length (athlete_full_name) > 3
+	and country_name is not null

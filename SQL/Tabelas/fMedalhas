@@ -1,5 +1,26 @@
 select
 	*, 
-	upper(athlete_full_name) as athlete_full_name_upper
+		case
+		when upper(athlete_full_name) like '-%'
+		or upper(athlete_full_name) like '.%' then replace(replace(upper(athlete_full_name),
+		'- ',
+		''),
+		'. ',
+		'')
+		else upper(athlete_full_name)
+	end
+	as athlete_full_name_upper,
+			case
+		when upper(athlete_full_name) like '-%'
+		or upper(athlete_full_name) like '.%' then replace(replace(upper(athlete_full_name),
+		'- ',
+		''),
+		'. ',
+		'')
+		else upper(athlete_full_name)
+	end || '-' || country_name as fk_Athlete
 from
 	olympic_medals om
+where
+	athlete_full_name is not null
+	and length(athlete_full_name) > 3
