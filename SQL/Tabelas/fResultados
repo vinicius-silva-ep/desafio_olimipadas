@@ -1,0 +1,50 @@
+select
+	distinct 
+		case
+		when upper(athlete_full_name) like '-%'
+		or upper(athlete_full_name) like '.%' then replace(replace(upper(athlete_full_name),
+		'- ',
+		''),
+		'. ',
+		'')
+		else upper(athlete_full_name)
+	end
+	as athlete_full_name,
+	case
+		when upper(athlete_name_1) like '-%'
+		or upper(athlete_name_1) like '.%' then replace(replace(upper(athlete_name_1),
+			'- ',
+			''),
+			'. ',
+			'')
+		else upper(athlete_name_1)
+	end
+	as athlete_name_1,
+	case
+		when upper(athlete_name_2) like '-%'
+		or upper(athlete_name_2) like '.%' then replace(replace(upper(athlete_name_2),
+			'- ',
+			''),
+			'. ',
+			'')
+		else upper(athlete_name_2)
+	end 
+	as athlete_name_2,
+	discipline_title,
+	event_title,
+	slug_game,
+	participant_type,
+	medal_type,
+	rank_equal,
+	rank_position,
+	country_name,
+	country_code,
+	country_3_letter_code,
+	athlete_url,
+	value_unit,
+	value_type,
+	athlete_full_name || '-' || country_name as fk_athelete_full_name,
+	athlete_name_1 || '-' || country_name as fk_athelete_name_1,
+	athlete_name_2 || '-' || country_name as fk_athelete_name_2
+from
+	olympic_results or2
